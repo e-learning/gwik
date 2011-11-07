@@ -9,11 +9,8 @@ import org.json.JSONObject;
 import org.json.JSONString;
 import org.mortbay.jetty.HttpConnection;
 
-import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
 /**
