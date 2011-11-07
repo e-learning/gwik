@@ -1,3 +1,4 @@
 *.iws
 .svn
+.DS_Store
 
