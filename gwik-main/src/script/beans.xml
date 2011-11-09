@@ -44,5 +44,6 @@
 
     <!--yalets-->
     <bean id="osmQueryYalet" class="gwik.main.OsmQueryYalet"/>
+    <bean id="kmlQueryYalet" class="gwik.main.KmlQueryYalet"/>
 
 </beans>
