@@ -42,7 +42,7 @@ public class OsmResponseParser {
         }
     }
 
-    private List<WikiObject> parse(InputStream is) throws IOException {
+    protected List<WikiObject> parse(InputStream is) throws IOException {
         List<WikiObject> result = new ArrayList<WikiObject>();
         try {
             Document doc = parserXML(is);
