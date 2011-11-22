@@ -82,32 +82,28 @@
                                     map.getProjectionObject() // to Spherical Mercator Projection
                                 ));
 
-                            var feature = new OpenLayers.Feature(photos, ll);
+                            var feature = new OpenLayers.Feature(markers, ll);
                              feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {
                                 'autoSize': true
                             });
-                            feature.data.popupContentHTML = '<div >'+ wikiObj.title +'</div>';
+                            feature.data.popupContentHTML =
+                                    '<div>'+ wikiObj.title +'</div>' +
+                                    '<div><img src='+ wikiObj.imageUrl +'></src></div>';
                             var marker = feature.createMarker();
 
-                            var markerOver = function(evt){
+                            var markerClick = function(evt){
                                 if (this.popup == null){
                                     this.popup = this.createPopup(this.closeBox);
                                     map.addPopup(this.popup);
                                     this.popup.show();
                                 }
                                 else{
-                                    this.popup.show();
+                                    this.popup.toggle();
                                 }
                                 OpenLayers.Event.stop(evt);
                             }
 
-                            var markerOut = function(evt){
-                                this.popup.hide();
-                                OpenLayers.Event.stop(evt);
-                            }
-
-                            marker.events.register("mouseover", feature, markerOver);
-                            marker.events.register("mouseout", feature, markerOut);
+                            marker.events.register("mousedown", feature, markerClick);
                             markers.addMarker( marker );
                         }
 
