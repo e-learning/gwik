@@ -29,37 +29,14 @@ public class OsmQueryYalet extends AbstractJsonYalet {
         log.debug("Start requesting overpass api");
         final String url = String.format(API_URL, bbox);
         log.debug("url = " + url);
-        List<ImagedWikiObject> res = convertToImagedWiki( new OsmResponseParser().parse(url) );
+        List<WikiObject> wikis = new OsmResponseParser().parse(url);
 
-        ImagesXmlParser imParser = new ImagesXmlParser();
-        ImageInfoParser iiParser = new ImageInfoParser();
-
-        for (int wikiObj=0; wikiObj<res.size(); ++wikiObj){
-            //Получаем название файла, соответсвующего одной из картинок статьи
-            String articleName = res.get(wikiObj).getTitle().replaceAll(" ", "%20");
-            String imagesApiUrl = String.format(IMAGES_API_URL, articleName);
-            String imageName = imParser.parse( imagesApiUrl ).replaceAll( " ", "%20" );
-
-            if ( !imageName.equals("error") ){
-                //по имени файла, получаем ссылку на картинку
-                String iiApiUrl = String.format( IMAGE_INFO_API_URL, imageName );
-                iiParser.parse( iiApiUrl, res.get(wikiObj) );
-            }
-        }
+        List<ImagedWikiObject> res = new ImagedWikiCreator().convertToImagedWiki( wikis );
 
         log.debug("found:" + res);
 
         return new JSONObject().put("result", res);
     }
 
-    private List<ImagedWikiObject> convertToImagedWiki( List<WikiObject> src){
-        List<ImagedWikiObject> res = new ArrayList<ImagedWikiObject>();
-        for (int i=0; i<src.size(); ++i){
-            res.add( new ImagedWikiObject( src.get(i)) );
-        }
-
-        src.clear();
-        return res;
-    }
 
 }

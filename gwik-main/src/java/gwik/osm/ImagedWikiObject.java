@@ -22,6 +22,12 @@ public class ImagedWikiObject extends WikiObject {
         super( wikiObj.getTitle(), wikiObj.getLon(), wikiObj.getLat() );
     }
 
+    public ImagedWikiObject(WikiObject wikiObj, String imageUrl, String imageTitle){
+        super( wikiObj.getTitle(), wikiObj.getLon(), wikiObj.getLat() );
+        mImageUrl = imageUrl;
+        mImageTitle = imageTitle;
+    }
+
     public ImagedWikiObject(
             String title,
             double lon,
@@ -40,9 +46,10 @@ public class ImagedWikiObject extends WikiObject {
 
     @Override
     public String toString() {
-        return "WikiObject{" +
+        return "ImagedWikiObject{" +
                 "title='" + super.getTitle() + '\'' +
                 ", url='" + super.getUrl() + '\'' +
+                ", image='" + mImageTitle + "'" +
                 ", imageUrl=" + mImageUrl +
                 ", lon=" + super.getLon() +
                 ", lat=" + super.getLat() +
@@ -55,6 +62,7 @@ public class ImagedWikiObject extends WikiObject {
             return new JSONObject()
                     .put("title", super.getTitle())
                     .put("url", super.getUrl())
+                    .put("imageTitle", mImageTitle)
                     .put("imageUrl", mImageUrl)
                     .put("lon", super.getLon())
                     .put("lat", super.getLat())
@@ -66,5 +74,6 @@ public class ImagedWikiObject extends WikiObject {
     }
 
     private String mImageUrl;
+    private String mImageTitle;
 
 }
