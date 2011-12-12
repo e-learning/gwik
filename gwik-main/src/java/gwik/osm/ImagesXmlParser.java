@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author : Shulepov
@@ -51,6 +49,9 @@ public class ImagesXmlParser {
             NodeList images = doc.getElementsByTagName("im");
             Node imNode = images.item(0);
 
+            if (imNode == null) {
+                return "error";
+            }
             Node attrTitle = null;
             try{
                NamedNodeMap attrs = imNode.getAttributes();

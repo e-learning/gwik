@@ -46,7 +46,7 @@ public class WikiObject implements JSONString {
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
-                this.title = parts[1];
+                this.title = parts[1].replaceAll("_", " ");
             } else {
                 this.title = title;
                 try {

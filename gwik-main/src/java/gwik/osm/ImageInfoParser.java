@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author: Shulepov
@@ -38,7 +36,11 @@ public class ImageInfoParser {
 
                     extractImageInfo(doc, result);
 
-                } catch (Exception e) {
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+                } catch (SAXException e) {
+                    throw new RuntimeException(e);
+                } catch (ParserConfigurationException e) {
                     throw new RuntimeException(e);
                 } finally {
                     is.close();
@@ -48,14 +50,17 @@ public class ImageInfoParser {
             private void extractImageInfo(Document doc, ImagedWikiObject result){
                 Node imUrl = doc.getElementsByTagName("ii").item(0);
 
+                if (imUrl == null) {
+                    return;
+                }
                 Node attrTitle = null;
-                try{
+//                try{
                     NamedNodeMap attrs = imUrl.getAttributes();
                     attrTitle = attrs.getNamedItem("url");
 
-                }catch(Exception e){
-                    throw new RuntimeException(e);
-                }
+//                }catch(Exception e){
+//                    throw new RuntimeException(e);
+//                }
 
                 //если изображение найдено, установить ссылку на него
                 if ( attrTitle != null ){

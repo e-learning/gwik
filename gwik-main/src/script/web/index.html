@@ -1,183 +1,83 @@
 <html>
 <head>
     <title>gwik</title>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
     <style type="text/css">
-        html, body, table, #basicMap {
-            width: 100%;
+            /* Override some defaults */
+        html, body {
+            background-color: #eee;
+        }
+
+        html {
+            padding-top: 40px;
+        }
+
+            /* The white background content wrapper */
+        .content {
+            margin: 0 -20px;
+            background-color: #fff;
+            padding: 5px;
+            /*height: 600px;*/
+            -webkit-border-radius: 0 0 6px 6px;
+            -moz-border-radius: 0 0 6px 6px;
+            border-radius: 0 0 6px 6px;
+            -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+            -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+        }
+
+        .footer {
+            text-align: center;
+        }
+
+        #rightbar {
             height: 100%;
-            margin: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 30px;
         }
 
-        #places {
-            width: 300px;
-            vertical-align: top;
+        .wiki-object {
+            padding-bottom: 5px;
         }
 
-        .wiki-obj {
-            font-style: italic;
-            text-decoration: none;
-            color: black;
+        .wiki-object img {
+            float: left;
+            padding-right: 5px;
         }
     </style>
     <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script type="text/javascript" src="gwik.js"></script>
 </head>
 <body>
-<table>
-    <tr>
-        <td width="100%">
-            <div id="basicMap"></div>
-        </td>
-        <td width="300px" valign="top">
-            <button id="showPhotos">ShowPhotos</button>
-            <button id="refresh">Refresh</button>
-            <div id="places">
-                <i>Press 'Refresh'</i>
+<div class="topbar">
+    <div class="fill">
+        <div class="container">
+            <span class="brand" href="#">Gwik</span>
+
+            <ul class="nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+        <div class="row">
+            <div class="span12">
+                <div id="basicMap"></div>
             </div>
-        </td>
-    </tr>
-    <script>
-        $(document).ready(function() {
-            map = new OpenLayers.Map("basicMap");
-            var mapnik = new OpenLayers.Layer.OSM();
-            map.addLayer(mapnik);
-            map.setCenter(new OpenLayers.LonLat(30.33, 59.95)// Center of the map
-                    .transform(
-                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                    new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-            ), 13 // Zoom level
-            );
-            markers = new OpenLayers.Layer.Markers("Markers");
-            photos = new OpenLayers.Layer.Markers("Markers");
-            map.addLayer(markers);
-            map.addLayer(photos);
+            <div class="span4" id="rightbar">
+            </div>
+        </div>
+    </div>
+</div>
 
-            $("#refresh").click(function() {
-                $("#places").html("<i>waiting...</i>");
-
-                $.ajax({
-                    url: '/main.xml',
-                    type: "GET",
-                    dataType: "json",
-                    async: true,
-                    data: {
-                        bbox: map.getExtent().transform(
-                                new OpenLayers.Projection("EPSG:900913"), // from Spherical Mercator Projection
-                                new OpenLayers.Projection("EPSG:4326") // transform to WGS 1984
-                        ).toBBOX()
-                    },
-                    success: function(data, textStatus) {
-                        $("#places").html("");
-                        markers.clearMarkers();
-
-
-                        for (var i in data.result) {
-                            var wikiObj = data.result[i];
-
-
-                            $("#places").append("<div><a class='wiki-obj' href='" + wikiObj.url+ "'>" + wikiObj.title + "</a> </div>");
-
-                            var ll = (new OpenLayers.LonLat(wikiObj.lon, wikiObj.lat).transform(
-                                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                                    map.getProjectionObject() // to Spherical Mercator Projection
-                                ));
-
-                            var feature = new OpenLayers.Feature(markers, ll);
-                             feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {
-                                'autoSize': true
-                            });
-                            feature.data.popupContentHTML =
-                                    '<div>'+ wikiObj.title +'</div>' +
-                                    '<div><img src='+ wikiObj.imageUrl +'></src></div>';
-                            var marker = feature.createMarker();
-
-                            var markerClick = function(evt){
-                                if (this.popup == null){
-                                    this.popup = this.createPopup(this.closeBox);
-                                    map.addPopup(this.popup);
-                                    this.popup.show();
-                                }
-                                else{
-                                    this.popup.toggle();
-                                }
-                                OpenLayers.Event.stop(evt);
-                            }
-
-                            marker.events.register("mousedown", feature, markerClick);
-                            markers.addMarker( marker );
-                        }
-
-                    },
-                    error: function() {
-                        $("#places").html("<strong>Error occurred</strong>");
-                    }
-                });
-
-
-            });
-
-            $("#showPhotos").click(function() {
-                $.ajax({
-                    url: 'kmlReq.xml',
-                    type: "GET",
-                    dataType: "json",
-                    async: true,
-                    data: {
-                        bbox: map.getExtent().transform(
-                                new OpenLayers.Projection("EPSG:900913"), // from Spherical Mercator Projection
-                                new OpenLayers.Projection("EPSG:4326") // transform to WGS 1984
-                        ).toBBOX()
-                    },
-                    success: function(data, textStatus) {
-
-                        for (var i in data.result) {
-                            var photoObj = data.result[i];
-
-
-                            var ll = (new OpenLayers.LonLat(photoObj.lon, photoObj.lat).transform(
-                                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                                    map.getProjectionObject() // to Spherical Mercator Projection
-                                ));
-                            var size = new OpenLayers.Size(50,50);
-                            var offset = new OpenLayers.Pixel(-Math.round(size.w/2), -size.h);
-                            var icon = new OpenLayers.Icon(photoObj.iconUrl, size, offset);
-
-
-                            var feature = new OpenLayers.Feature(photos, ll);
-                            feature.closeBox = true;
-                            feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {
-                                'autoSize': true
-                            });
-                            feature.data.popupContentHTML = '<img src=' + photoObj.mediumImUrl+ '></img>';
-                            feature.data.icon = icon;
-                            var marker = feature.createMarker();
-
-                            var markerClick = function(evt){
-                                if (this.popup == null){
-                                    this.popup = this.createPopup(this.closeBox);
-                                    map.addPopup(this.popup);
-                                    this.popup.show();
-                                }
-                                else{
-                                    this.popup.toggle();
-                                }
-                                OpenLayers.Event.stop(evt);
-                            }
-
-                            marker.events.register("mousedown", feature, markerClick);
-
-                            photos.addMarker( marker );
-                        }
-
-                    },
-                    error: function(){
-
-                    }
-                 });
-            });
-
-        });
-    </script>
-</table>
+<div class="footer">
+    &nbsp;
+</div>
 </body>
 </html>
