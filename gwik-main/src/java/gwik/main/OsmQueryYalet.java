@@ -18,8 +18,6 @@ public class OsmQueryYalet extends AbstractJsonYalet {
     private static final Logger log = Logger.getLogger(OsmQueryYalet.class);
 
     private static final String API_URL = "http://www.overpass-api.de/api/xapi?*[bbox=%s][wikipedia=*]";
-    private static final String IMAGES_API_URL = "http://ru.wikipedia.org/w/api.php?action=query&titles=%s&prop=images&format=xml";
-    private static final String IMAGE_INFO_API_URL = "http://ru.wikipedia.org/w/api.php?action=query&titles=%s&prop=imageinfo&iiprop=url&format=xml";
 
     @Override
     protected Object process(InternalRequest req) throws JSONException {
