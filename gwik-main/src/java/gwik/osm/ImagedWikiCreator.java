@@ -19,11 +19,11 @@ public class ImagedWikiCreator {
      */
     public List<ImagedWikiObject> convertToImagedWiki(List<WikiObject> src){
         List<ImagedWikiObject> result = new ArrayList<ImagedWikiObject>();
-
+        if ( src.size() == 0 ) return result;
+        
         //получить список "статья-изображение"
         HashMap<String, String> fileNames = getImages(src);
-        if ( fileNames.size() == 0 ) return result;
-
+        
         //получить список ссылок на изображения ("изображение - url")
         final Collection<String> imageTitles = fileNames.values();
         HashMap<String, String> imageUrls = getImagesURL( imageTitles );
@@ -33,6 +33,8 @@ public class ImagedWikiCreator {
         	String articleTitle = src.get(i).getTitle();
         	String imageTitle = fileNames.get( articleTitle );
         	String imageUrl = imageUrls.get( imageTitle );
+            if (imageUrl == null)
+                imageUrl = "http://placehold.it/50&text=NOT+FOUND";
         	result.add( new ImagedWikiObject( src.get(i), imageUrl, imageTitle ) );
         }
 

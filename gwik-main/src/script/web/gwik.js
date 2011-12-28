@@ -54,7 +54,7 @@ function refresh() {
                 $("#rightbar").append(
                     "" +
                         "<div class='wiki-object'>" +
-                        "<img class='thumbnail' src='http://placehold.it/50x50' /> " +
+                        "<img class='thumbnail' src="+wikiObj.imageUrl +" style='height:50'/> " +
                         "<strong><a href='" + wikiObj.url + "'>" + shortTitle + "</a></strong><br>" +
                         "<i>Short snippet from page. Max 100 symbols</i>" +
                         "</div>"
